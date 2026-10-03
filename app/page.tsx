@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
 const PriceBox = ({
   label,
@@ -27,7 +30,9 @@ const SimpleItem = ({
   <div className="border-t border-black/15 py-5">
     <div className="flex items-start justify-between gap-5">
       <div className="min-w-0">
-        <h4 className="text-[17px] font-black uppercase leading-tight">{name}</h4>
+        <h4 className="text-[17px] font-black uppercase leading-tight">
+          {name}
+        </h4>
 
         {description && (
           <p className="mt-2 max-w-xl text-[13px] font-medium leading-[1.55] text-black/55">
@@ -42,6 +47,47 @@ const SimpleItem = ({
 );
 
 export default function Home() {
+  const [activeCategory, setActiveCategory] = useState("burgers");
+
+  useEffect(() => {
+    const categoryIds = [
+      "burgers",
+      "tacos",
+      "wings",
+      "combos",
+      "fries",
+      "rice",
+      "drinks",
+    ];
+
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY + 140;
+      let currentCategory = "burgers";
+
+      categoryIds.forEach((id) => {
+        const section = document.getElementById(id);
+
+        if (section && section.offsetTop <= scrollPosition) {
+          currentCategory = id;
+        }
+      });
+
+      setActiveCategory(currentCategory);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const categoryClass = (category: string) =>
+    `whitespace-nowrap rounded-full border px-5 py-3 text-xs font-black uppercase tracking-wide ${
+      activeCategory === category
+        ? "border-[#111111] bg-[#111111] text-white"
+        : "border-black/15"
+    }`;
+
   return (
     <main className="min-h-screen bg-[#F7F1E3] text-[#111111]">
       {/* HERO */}
@@ -91,55 +137,63 @@ export default function Home() {
             </h2>
           </div>
         </div>
+
         {/* CATEGORY NAVIGATION */}
         <div className="sticky top-0 z-50 mt-8 border-y border-black/10 bg-[#F7F1E3]/95 py-3 backdrop-blur-md">
           <div className="w-full overflow-x-scroll overscroll-x-contain [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <div className="flex w-max gap-2 px-5 sm:px-6">
               <a
                 href="#burgers"
-                className="whitespace-nowrap rounded-full bg-[#111111] px-5 py-3 text-xs font-black uppercase tracking-wide text-white"
+                onClick={() => setActiveCategory("burgers")}
+                className={categoryClass("burgers")}
               >
                 Burgers
               </a>
 
               <a
                 href="#tacos"
-                className="whitespace-nowrap rounded-full border border-black/15 px-5 py-3 text-xs font-black uppercase tracking-wide"
+                onClick={() => setActiveCategory("tacos")}
+                className={categoryClass("tacos")}
               >
                 Tacos
               </a>
 
               <a
                 href="#wings"
-                className="whitespace-nowrap rounded-full border border-black/15 px-5 py-3 text-xs font-black uppercase tracking-wide"
+                onClick={() => setActiveCategory("wings")}
+                className={categoryClass("wings")}
               >
                 Wings
               </a>
 
               <a
                 href="#combos"
-                className="whitespace-nowrap rounded-full border border-black/15 px-5 py-3 text-xs font-black uppercase tracking-wide"
+                onClick={() => setActiveCategory("combos")}
+                className={categoryClass("combos")}
               >
                 Combos
               </a>
 
               <a
                 href="#fries"
-                className="whitespace-nowrap rounded-full border border-black/15 px-5 py-3 text-xs font-black uppercase tracking-wide"
+                onClick={() => setActiveCategory("fries")}
+                className={categoryClass("fries")}
               >
                 Fries
               </a>
 
               <a
                 href="#rice"
-                className="whitespace-nowrap rounded-full border border-black/15 px-5 py-3 text-xs font-black uppercase tracking-wide"
+                onClick={() => setActiveCategory("rice")}
+                className={categoryClass("rice")}
               >
                 Fried Rice
               </a>
 
               <a
                 href="#drinks"
-                className="whitespace-nowrap rounded-full border border-black/15 px-5 py-3 text-xs font-black uppercase tracking-wide"
+                onClick={() => setActiveCategory("drinks")}
+                className={categoryClass("drinks")}
               >
                 Drinks
               </a>
@@ -387,18 +441,22 @@ export default function Home() {
 
           <SimpleItem name="Plain Fries" price="Le60" />
           <SimpleItem name="Cheesy Fries" price="Le70" />
+
           <SimpleItem
             name="Loaded Cheesy Fries with Brown Onions"
             price="Le80"
           />
+
           <SimpleItem
             name="Loaded Cheesy Fries with BBQ Sausage"
             price="Le90"
           />
+
           <SimpleItem
             name="Loaded Cheesy Fries with Shredded Chicken"
             price="Le110"
           />
+
           <SimpleItem name="Loaded Cheesy Fries with Beef" price="Le120" />
         </div>
 
@@ -428,10 +486,12 @@ export default function Home() {
           <SimpleItem name="Fried Rice with 6 Grilled Wings" price="Le160" />
           <SimpleItem name="Fried Rice with 12 Grilled Wings" price="Le250" />
           <SimpleItem name="Fried Rice with BBQ Sausage" price="Le90" />
+
           <SimpleItem
             name="Fried Rice with Shredded Chicken"
             price="Le110"
           />
+
           <SimpleItem name="Fried Rice with Beef" price="Le120" />
         </div>
 
