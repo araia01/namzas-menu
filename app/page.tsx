@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const PriceBox = ({
   label,
@@ -41,7 +41,9 @@ const SimpleItem = ({
         )}
       </div>
 
-      <p className="shrink-0 text-[18px] font-black text-[#F58220]">{price}</p>
+      <p className="shrink-0 text-[18px] font-black text-[#F58220]">
+        {price}
+      </p>
     </div>
   </div>
 );
@@ -49,18 +51,35 @@ const SimpleItem = ({
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState("burgers");
 
-  useEffect(() => {
-    const categoryIds = [
-      "burgers",
-      "tacos",
-      "wings",
-      "combos",
-      "fries",
-      "rice",
-      "drinks",
-    ];
+  const categoryNavRef = useRef<HTMLDivElement>(null);
+  const categoryRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
+  const isCategoryJumping = useRef(false);
+  const scrollEndTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const categoryIds = [
+    "burgers",
+    "tacos",
+    "wings",
+    "combos",
+    "fries",
+    "rice",
+    "drinks",
+  ];
+
+  useEffect(() => {
     const handleScroll = () => {
+      if (isCategoryJumping.current) {
+        if (scrollEndTimer.current) {
+          clearTimeout(scrollEndTimer.current);
+        }
+
+        scrollEndTimer.current = setTimeout(() => {
+          isCategoryJumping.current = false;
+        }, 150);
+
+        return;
+      }
+
       const scrollPosition = window.scrollY + 140;
       let currentCategory = "burgers";
 
@@ -78,8 +97,65 @@ export default function Home() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
 
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+
+      if (scrollEndTimer.current) {
+        clearTimeout(scrollEndTimer.current);
+      }
+    };
   }, []);
+
+  useEffect(() => {
+    const nav = categoryNavRef.current;
+    const activeButton = categoryRefs.current[activeCategory];
+
+    if (!nav || !activeButton) return;
+
+    const targetLeft =
+      activeButton.offsetLeft -
+      nav.clientWidth / 2 +
+      activeButton.clientWidth / 2;
+
+    nav.scrollTo({
+      left: targetLeft,
+      behavior: "smooth",
+    });
+  }, [activeCategory]);
+
+  const handleCategoryClick = (
+    event: React.MouseEvent<HTMLAnchorElement>,
+    category: string
+  ) => {
+    event.preventDefault();
+
+    isCategoryJumping.current = true;
+    setActiveCategory(category);
+
+    const section = document.getElementById(category);
+
+    if (section) {
+      section.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+
+      window.history.replaceState(null, "", `#${category}`);
+    }
+  };
+
+  const handleMenuClick = () => {
+    isCategoryJumping.current = true;
+    setActiveCategory("burgers");
+
+    if (scrollEndTimer.current) {
+      clearTimeout(scrollEndTimer.current);
+    }
+
+    scrollEndTimer.current = setTimeout(() => {
+      isCategoryJumping.current = false;
+    }, 150);
+  };
 
   const categoryClass = (category: string) =>
     `whitespace-nowrap rounded-full border px-5 py-3 text-xs font-black uppercase tracking-wide ${
@@ -117,6 +193,7 @@ export default function Home() {
 
         <a
           href="#menu"
+          onClick={handleMenuClick}
           className="mt-9 inline-flex min-h-[52px] items-center justify-center rounded-full bg-[#F58220] px-9 text-sm font-black uppercase tracking-[0.04em] text-black transition duration-200 hover:scale-105 hover:bg-[#ff8b26]"
         >
           View Menu
@@ -140,59 +217,97 @@ export default function Home() {
 
         {/* CATEGORY NAVIGATION */}
         <div className="sticky top-0 z-50 mt-8 border-y border-black/10 bg-[#F7F1E3]/95 py-3 backdrop-blur-md">
-          <div className="w-full overflow-x-scroll overscroll-x-contain [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div
+            ref={categoryNavRef}
+            className="w-full overflow-x-scroll overscroll-x-contain [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
             <div className="flex w-max gap-2 px-5 sm:px-6">
               <a
+                ref={(element) => {
+                  categoryRefs.current.burgers = element;
+                }}
                 href="#burgers"
-                onClick={() => setActiveCategory("burgers")}
+                onClick={(event) =>
+                  handleCategoryClick(event, "burgers")
+                }
                 className={categoryClass("burgers")}
               >
                 Burgers
               </a>
 
               <a
+                ref={(element) => {
+                  categoryRefs.current.tacos = element;
+                }}
                 href="#tacos"
-                onClick={() => setActiveCategory("tacos")}
+                onClick={(event) =>
+                  handleCategoryClick(event, "tacos")
+                }
                 className={categoryClass("tacos")}
               >
                 Tacos
               </a>
 
               <a
+                ref={(element) => {
+                  categoryRefs.current.wings = element;
+                }}
                 href="#wings"
-                onClick={() => setActiveCategory("wings")}
+                onClick={(event) =>
+                  handleCategoryClick(event, "wings")
+                }
                 className={categoryClass("wings")}
               >
                 Wings
               </a>
 
               <a
+                ref={(element) => {
+                  categoryRefs.current.combos = element;
+                }}
                 href="#combos"
-                onClick={() => setActiveCategory("combos")}
+                onClick={(event) =>
+                  handleCategoryClick(event, "combos")
+                }
                 className={categoryClass("combos")}
               >
                 Combos
               </a>
 
               <a
+                ref={(element) => {
+                  categoryRefs.current.fries = element;
+                }}
                 href="#fries"
-                onClick={() => setActiveCategory("fries")}
+                onClick={(event) =>
+                  handleCategoryClick(event, "fries")
+                }
                 className={categoryClass("fries")}
               >
                 Fries
               </a>
 
               <a
+                ref={(element) => {
+                  categoryRefs.current.rice = element;
+                }}
                 href="#rice"
-                onClick={() => setActiveCategory("rice")}
+                onClick={(event) =>
+                  handleCategoryClick(event, "rice")
+                }
                 className={categoryClass("rice")}
               >
                 Fried Rice
               </a>
 
               <a
+                ref={(element) => {
+                  categoryRefs.current.drinks = element;
+                }}
                 href="#drinks"
-                onClick={() => setActiveCategory("drinks")}
+                onClick={(event) =>
+                  handleCategoryClick(event, "drinks")
+                }
                 className={categoryClass("drinks")}
               >
                 Drinks
@@ -457,7 +572,10 @@ export default function Home() {
             price="Le110"
           />
 
-          <SimpleItem name="Loaded Cheesy Fries with Beef" price="Le120" />
+          <SimpleItem
+            name="Loaded Cheesy Fries with Beef"
+            price="Le120"
+          />
         </div>
 
         {/* ==================== FRIED RICE ==================== */}
@@ -482,17 +600,32 @@ export default function Home() {
           </div>
 
           <SimpleItem name="Fried Rice" price="Le70" />
-          <SimpleItem name="Fried Rice with 3 Grilled Wings" price="Le115" />
-          <SimpleItem name="Fried Rice with 6 Grilled Wings" price="Le160" />
-          <SimpleItem name="Fried Rice with 12 Grilled Wings" price="Le250" />
-          <SimpleItem name="Fried Rice with BBQ Sausage" price="Le90" />
+          <SimpleItem
+            name="Fried Rice with 3 Grilled Wings"
+            price="Le115"
+          />
+          <SimpleItem
+            name="Fried Rice with 6 Grilled Wings"
+            price="Le160"
+          />
+          <SimpleItem
+            name="Fried Rice with 12 Grilled Wings"
+            price="Le250"
+          />
+          <SimpleItem
+            name="Fried Rice with BBQ Sausage"
+            price="Le90"
+          />
 
           <SimpleItem
             name="Fried Rice with Shredded Chicken"
             price="Le110"
           />
 
-          <SimpleItem name="Fried Rice with Beef" price="Le120" />
+          <SimpleItem
+            name="Fried Rice with Beef"
+            price="Le120"
+          />
         </div>
 
         {/* ==================== BEVERAGES ==================== */}
@@ -540,6 +673,7 @@ export default function Home() {
 
           <a
             href="#menu"
+            onClick={handleMenuClick}
             className="mt-8 inline-flex min-h-[48px] items-center justify-center rounded-full border border-black/15 px-6 text-xs font-black uppercase tracking-wider transition duration-200 hover:border-black hover:bg-black hover:text-white"
           >
             ↑ Back to Menu
