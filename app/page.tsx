@@ -600,18 +600,22 @@ export default function Home() {
           </div>
 
           <SimpleItem name="Fried Rice" price="Le70" />
+
           <SimpleItem
             name="Fried Rice with 3 Grilled Wings"
             price="Le115"
           />
+
           <SimpleItem
             name="Fried Rice with 6 Grilled Wings"
             price="Le160"
           />
+
           <SimpleItem
             name="Fried Rice with 12 Grilled Wings"
             price="Le250"
           />
+
           <SimpleItem
             name="Fried Rice with BBQ Sausage"
             price="Le90"
@@ -670,6 +674,70 @@ export default function Home() {
           <p className="mt-4 text-xs font-bold uppercase tracking-[0.2em] text-black/35">
             Namza&apos;s Smash Burgers
           </p>
+
+          {/* SOCIAL MEDIA */}
+          <div className="mt-7 flex items-center justify-center gap-4">
+            <a
+              href="https://www.instagram.com/namzas__sl?stkn=cTY2OGVpcWg5bmpz"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Namza's Instagram"
+              className="flex h-12 w-12 items-center justify-center rounded-full border border-black/15 transition duration-200 hover:border-[#F58220] hover:bg-[#F58220]"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                className="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                aria-hidden="true"
+              >
+                <rect x="3" y="3" width="18" height="18" rx="5" />
+                <circle cx="12" cy="12" r="4" />
+                <circle
+                  cx="17.5"
+                  cy="6.5"
+                  r="1"
+                  fill="currentColor"
+                  stroke="none"
+                />
+              </svg>
+            </a>
+
+            <a
+              href="https://www.tiktok.com/@namzas_sl?_r=1&_t=ZS-9AM4cdEb57M"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Namza's TikTok"
+              className="flex h-12 w-12 items-center justify-center rounded-full border border-black/15 transition duration-200 hover:border-[#F58220] hover:bg-[#F58220]"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                className="h-5 w-5"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path d="M15.5 3c.3 2.2 1.6 3.5 3.5 3.7v3.1c-1.3 0-2.5-.4-3.5-1.1v6.1a6 6 0 1 1-5.2-5.9v3.2a2.9 2.9 0 1 0 2.1 2.8V3h3.1Z" />
+              </svg>
+            </a>
+
+            <a
+              href="https://www.facebook.com/share/1Jr4pUkPP3/?mibextid=wwXIfr"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Namza's Facebook"
+              className="flex h-12 w-12 items-center justify-center rounded-full border border-black/15 transition duration-200 hover:border-[#F58220] hover:bg-[#F58220]"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                className="h-5 w-5"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path d="M13.7 21v-8h2.7l.4-3h-3.1V8.1c0-.9.3-1.5 1.6-1.5H17V3.9c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3V10H7.5v3h2.8v8h3.4Z" />
+              </svg>
+            </a>
+          </div>
 
           <a
             href="#menu"
