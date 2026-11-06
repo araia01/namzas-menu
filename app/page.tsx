@@ -1,7 +1,8 @@
+
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 const PriceBox = ({
   label,
@@ -65,6 +66,38 @@ export default function Home() {
     "rice",
     "drinks",
   ];
+
+  // Always start at the landing page when the website loads or is restored.
+  useLayoutEffect(() => {
+    const resetLandingPage = () => {
+      window.history.scrollRestoration = "manual";
+
+      if (window.location.hash) {
+        window.history.replaceState(
+          null,
+          "",
+          `${window.location.pathname}${window.location.search}`
+        );
+      }
+
+      window.scrollTo(0, 0);
+      setActiveCategory("burgers");
+    };
+
+    resetLandingPage();
+
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        resetLandingPage();
+      }
+    };
+
+    window.addEventListener("pageshow", handlePageShow);
+
+    return () => {
+      window.removeEventListener("pageshow", handlePageShow);
+    };
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
